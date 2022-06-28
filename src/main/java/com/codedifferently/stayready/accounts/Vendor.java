@@ -1,13 +1,12 @@
 package com.codedifferently.stayready.accounts;
 
+import com.codedifferently.stayready.address.Address;
 import com.codedifferently.stayready.order.Order;
+import com.codedifferently.stayready.order.OrderStatus;
 import com.codedifferently.stayready.product.Product;
 import com.codedifferently.stayready.product.ProductCategory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Vendor extends Account {
 
@@ -33,6 +32,24 @@ public class Vendor extends Account {
         }
         inventory.put(product, amount);
     }
+    public void purchaseFromVendor(Product product, Address address) throws ProductNotAvailableException {
+        if (inventory.containsKey(product)) {
+            if (inventory.get(product) == 0) {
+                System.out.println("Sorry we are out of that product");
+            } else {
+                sellProduct(product);
+                Order order = new Order(product, address, OrderStatus.PENDING);
+                orders.add(order);
+            }
+        } else{
+            throw new ProductNotAvailableException();
+        }
+    }
+    private void sellProduct(Product product){
+        Integer newAmount = inventory.get(product) - 1;
+        inventory.put(product, newAmount);
+    }
+
 
     public Boolean removeProduct(Product product) {
         if (inventory.containsKey(product)) {
@@ -88,7 +105,20 @@ public class Vendor extends Account {
         return ordersDisplayed;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Vendor vendor = (Vendor) o;
+        return Objects.equals(brandName, vendor.brandName) && Objects.equals(inventory, vendor.inventory) && Arrays.equals(showcase, vendor.showcase) && Objects.equals(orders, vendor.orders);
+    }
 
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(brandName, inventory, orders);
+        result = 31 * result + Arrays.hashCode(showcase);
+        return result;
+    }
 
     public Integer getInventoryAmount() {
         return inventory.size();

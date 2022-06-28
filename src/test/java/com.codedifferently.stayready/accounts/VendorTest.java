@@ -41,13 +41,12 @@ public class VendorTest {
         Vendor vendor = new Vendor("Daniel", "Boyce", "danielboyce@gmail.com",
                 "456982t", "Daniel's");
         vendor.addProduct(product, 1);
-        vendor.addProduct(product,3);
+        vendor.addProduct(product, 3);
 
         Integer actual = vendor.getInventory().get(product);
         Integer expected = 4;
-        Assertions.assertEquals(expected,actual);
+        Assertions.assertEquals(expected, actual);
     }
-
 
 
     @Test
@@ -121,9 +120,9 @@ public class VendorTest {
         Product product = new Product("steve", ProductCategory.CLOTHING, 100.00);
         Vendor vendor = new Vendor("Daniel", "Boyce", "danielboyce@gmail.com",
                 "456982t", "Daniel's");
-        vendor.addProduct(product,4);
-        Assertions.assertThrows(ProductNotAvailableException.class,()->{
-           vendor.searchByCategory(ProductCategory.ATHLETICS);
+        vendor.addProduct(product, 4);
+        Assertions.assertThrows(ProductNotAvailableException.class, () -> {
+            vendor.searchByCategory(ProductCategory.ATHLETICS);
         });
     }
 
@@ -178,4 +177,30 @@ public class VendorTest {
                 "456982t", "Daniel's");
         Assertions.assertFalse(vendor.validatePassword("456982"));
     }
+
+    @Test
+    @DisplayName("Purchase Test")
+    public void purchaseTest01() throws ProductNotAvailableException{
+        Vendor vendor = new Vendor("Daniel", "Boyce", "danielboyce@gmail.com",
+                "456982t", "Daniel's");
+        Product product = new Product("home", ProductCategory.HOME_APPLIANCES, 100.00);
+        vendor.addProduct(product, 1);
+        vendor.purchaseFromVendor(product,new Address("washington","13","springfeild","Il"));
+        Integer expected = 0;
+        Integer actual = vendor.getInventory().get(product);
+        Assertions.assertEquals(expected,actual);
+    }
+
+    @Test
+    @DisplayName("Purchase Test")
+    public void purchaseTest02() {
+        Assertions.assertThrows(ProductNotAvailableException.class,()->{
+            Vendor vendor = new Vendor("Daniel", "Boyce", "danielboyce@gmail.com",
+                    "456982t", "Daniel's");
+            Product product = new Product("home", ProductCategory.HOME_APPLIANCES, 100.00);
+            vendor.purchaseFromVendor(product,new Address("washington","13","springfeild","Il"));
+        });
+    }
+
+
 }

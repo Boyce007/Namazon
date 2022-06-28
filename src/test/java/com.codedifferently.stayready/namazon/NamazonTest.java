@@ -106,12 +106,12 @@ public class NamazonTest {
 
     @Test
     @DisplayName("Select Vendor Test")
-    public void selectVendorTest() {
+    public void selectVendorTest() throws VendorNotAvailableException {
         Namazon namazon = new Namazon();
         Vendor vendor = new Vendor("Daniel", "Boyce", "dboyce@gmail.com", "123abc"
                 ,"Danny's");
         namazon.getVendors().add(vendor);
-        String actual = vendor.toString();
+        String actual = namazon.selectVendor("Danny's").toString();
         String expected = "Daniel Boyce dboyce@gmail.com 123abc 1 Danny's";
         Assertions.assertEquals(expected,actual);
     }
@@ -123,7 +123,7 @@ public class NamazonTest {
         Vendor vendor = new Vendor("Daniel", "Boyce", "dboyce@gmail.com", "123abc"
                 ,"Danny's");
         Assertions.assertThrows(VendorNotAvailableException.class,()->{
-           namazon.selectVendor(vendor);
+           namazon.selectVendor("nothing");
         });
     }
 }

@@ -3,6 +3,8 @@ package com.codedifferently.stayready.namazon;
 import com.codedifferently.stayready.accounts.Account;
 import com.codedifferently.stayready.accounts.Customer;
 import com.codedifferently.stayready.accounts.Vendor;
+import com.codedifferently.stayready.product.Product;
+import com.codedifferently.stayready.product.ProductCategory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +18,8 @@ public class Namazon {
     private List<Vendor> vendors;
     Scanner scanner;
     Account currentUser = null;
+    Vendor currentVendor = null;
+    Customer currentCustomer = null;
 
     public Namazon() {
         customers = new ArrayList<>();
@@ -81,50 +85,15 @@ public class Namazon {
         return vendors;
     }
 
-    public Vendor selectVendor(Vendor vendor) throws VendorNotAvailableException {
+    public Vendor selectVendor(String vendor) throws VendorNotAvailableException {
         for (Vendor v : vendors) {
-            if (vendor.equals(v)) {
+            if (v.getBrandName().equals(vendor)) {
                 return v;
             }
         }
         throw new VendorNotAvailableException();
     }
 
-    public Account promptUserToCreateAccount(Scanner scanner, String type) {
-        System.out.println("Please Enter your Account Information ");
-        System.out.println("firstName: ");
-        String firstName = scanner.next();
-        System.out.println("LastName: ");
-        String lastName = scanner.next();
-        String brandName = "";
-        if (type.equals("v")) {
-            System.out.println("BrandName: ");
-            brandName = scanner.next();
-        }
-        System.out.println("email: ");
-        String email = scanner.next();
-        System.out.println("password: ");
-        String password = scanner.next();
-        Boolean isValid = false;
-        while (isValid == false) {
-            try {
-                if (type.equals("v")) {
-                    Vendor user = signUpAsAVendor(firstName, lastName, email, password, brandName);
-                    isValid = true;
-                    return user;
-
-                } else {
-                    Customer user = signUpAsACustomer(firstName, lastName, email, password);
-                    isValid = true;
-                    return user;
-                }
-            } catch (AccountCreationException ex) {
-                System.out.println("email is invalid enter again: ");
-                email = scanner.next();
-            }
-        }
-        return null;
-    }
     private Boolean welcomeScreen() {
         Boolean flag = true;
         String output = "Welcome to Namazon. Please select from the following options."
@@ -175,45 +144,67 @@ public class Namazon {
         String password = scanner.next();
         System.out.println("Are you Customer or vendor(c for customer v for vendor)");
         String selection = scanner.next();
-        switch (selection) {
-            case "v":
-                System.out.println("Enter BrandName:");
-                String brandName  = scanner.next();
-                Boolean flag = true;
-                while (flag == true) {
-                    try {
-                        currentUser = signUpAsAVendor(firstName, lastName, email, password, brandName);
-                        flag = false;
-                    } catch (AccountCreationException e) {
-                        System.out.println("Invalid email enter again: ");
-                        email = scanner.next();
-                    }
-                }
-            case "c":
-
+        Boolean flag = true;
+        if (selection.equals("v")) {
+            System.out.println("Enter BrandName:");
+            String brandName = scanner.next();
+            while (flag == true) {
                 try {
-                    currentUser = signUpAsACustomer(firstName,lastName,email,password);
+                    currentVendor =  signUpAsAVendor(firstName, lastName, email, password, brandName);
+                    flag = false;
                 } catch (AccountCreationException e) {
-                    System.out.println("Invalid email enter again ");
+                    System.out.println("Invalid email enter again: ");
+                    email = scanner.next();
                 }
+            }
+        } else if (selection.equals("c")) {
+            try {
+                currentCustomer =  signUpAsACustomer(firstName, lastName, email, password);
+                flag = false;
+            } catch (AccountCreationException e) {
+                System.out.println("Invalid email enter again ");
+            }
 
         }
-
     }
 
     public void startUp() {
         Boolean flag = true;
         while (flag){
-            if(currentUser == null)
+            if(currentVendor == null && currentCustomer == null) {
                 flag = welcomeScreen();
-            else{
-                userOptionsScreen();
-            }
+            }else if(!currentVendor.equals(null)){
+                flag = VendorOptionsScreen();
+            } else if(!currentCustomer.equals(null));
         }
     }
 
-    private void userOptionsScreen() {
+    private Boolean VendorOptionsScreen() {
+        Boolean flag = true;
+        String output = "Hello " + currentVendor.getFirstName()
+                + "\nPress 1 to View inventory"
+                + "\nPress 2 to add products"
+                + "\nPress 3 to remove a product"
+                + "\nPress 4 to remove a exit";
+        System.out.println(output);
+        Integer selection = scanner.nextInt();
 
+        if (selection == 1 ){
+            System.out.println("You have " + currentVendor.getInventoryAmount() +" products in  your inventory " );
+        } else if(selection == 2) {
+            System.out.println("Enter a product name: ");
+            String productName = scanner.next();
+            System.out.println("Enter a category : ");
+
+            //Product addedProduct = new Product(productName,)
+            //currentVendor.addProduct();
+        } else if (selection == 3) {
+            System.out.println("Not done");
+        } else{
+            System.out.println("GoodBye");
+            flag = false;
+        }
+        return flag;
     }
 
 
