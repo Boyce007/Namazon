@@ -1,5 +1,7 @@
 package com.codedifferently.stayready.product;
 
+import java.util.Objects;
+
 public class Product {
 
     public static Long ID_Count = Long.valueOf(1);
@@ -50,6 +52,19 @@ public class Product {
 
     public Double getPrice() {
         return price;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return Objects.equals(id, product.id) && Objects.equals(name, product.name) && category == product.category && Objects.equals(price, product.price);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, category, price);
     }
 
     public void setPrice(Double price) {

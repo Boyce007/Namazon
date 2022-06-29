@@ -59,13 +59,18 @@ public class Vendor extends Account {
         return false;
     }
 
-    public void addProductToShowCase(Product product, Integer slot) {
-        Product productToAdd = null;
+    public Boolean addProductToShowCase(String productName, Integer slot) {
+        Product productToAdd =null;
         for (Product item : inventory.keySet()) {
-            if (item.equals(product)) ;
-            productToAdd = product;
+            if (item.getName().equalsIgnoreCase(productName)) {
+                productToAdd = item;
+            }
+        }
+        if( productToAdd == null) {
+            return false;
         }
         showcase[slot] = productToAdd;
+        return true;
     }
 
     public List<Product> searchByCategory(ProductCategory category) throws ProductNotAvailableException {
@@ -96,6 +101,15 @@ public class Vendor extends Account {
         }
         return searched;
     }
+    public String disPlayShowCase() {
+        String products = "";
+        for (Product product:showcase) {
+            if(product != null ) {
+                products += product.getName() + " \n";
+            }
+        }
+        return products;
+    }
 
     public String displayALlOrders() {
         String ordersDisplayed = " ";
@@ -103,6 +117,13 @@ public class Vendor extends Account {
             ordersDisplayed += order.toString() + "\n";
         }
         return ordersDisplayed;
+    }
+    public String disPlayInventory() {
+        String products = "";
+        for (Product product: inventory.keySet()) {
+            products+= product.getName() +" \n";
+        }
+        return products;
     }
 
     @Override

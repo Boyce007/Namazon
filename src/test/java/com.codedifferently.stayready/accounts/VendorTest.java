@@ -94,12 +94,14 @@ public class VendorTest {
         Vendor vendor = new Vendor("Daniel", "Boyce", "danielboyce@gmail.com",
                 "456982t", "Daniel's");
         vendor.addProduct(product, 3);
-        vendor.addProductToShowCase(product, 0);
+        vendor.addProductToShowCase("stove", 0);
         Product expected = product;
         Product[] showcase = vendor.getShowcase();
         Product actual = showcase[0];
         Assertions.assertEquals(expected, actual);
     }
+
+
 
     @Test
     @DisplayName("Search by Category Test")
@@ -200,6 +202,20 @@ public class VendorTest {
             Product product = new Product("home", ProductCategory.HOME_APPLIANCES, 100.00);
             vendor.purchaseFromVendor(product,new Address("washington","13","springfeild","Il"));
         });
+    }
+
+    @Test
+    @DisplayName("Display Showcase test")
+    public void displayShowCase() {
+        Product product = new Product("stove", ProductCategory.HOME_APPLIANCES, 100.00);
+        Vendor vendor = new Vendor("Daniel", "Boyce", "danielboyce@gmail.com",
+                "456982t", "Daniel's");
+        vendor.addProduct(product, 3);
+        vendor.addProductToShowCase("stove", 1);
+        String expected = "stove";
+        String actual = vendor.getShowcase()[1].getName();
+        Assertions.assertEquals(expected,actual);
+
     }
 
 

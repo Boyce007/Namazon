@@ -2,6 +2,7 @@ package com.codedifferently.stayready.namazon;
 
 import com.codedifferently.stayready.accounts.Account;
 import com.codedifferently.stayready.accounts.Customer;
+import com.codedifferently.stayready.accounts.ProductNotAvailableException;
 import com.codedifferently.stayready.accounts.Vendor;
 import com.codedifferently.stayready.product.Product;
 import com.codedifferently.stayready.product.ProductCategory;
@@ -185,26 +186,78 @@ public class Namazon {
                 + "\nPress 1 to View inventory"
                 + "\nPress 2 to add products"
                 + "\nPress 3 to remove a product"
-                + "\nPress 4 to remove a exit";
+                + "\nPress 4 to add a product to showcase"
+                + "\nPress 5 to exit";
         System.out.println(output);
         Integer selection = scanner.nextInt();
-
         if (selection == 1 ){
             System.out.println("You have " + currentVendor.getInventoryAmount() +" products in  your inventory " );
+            System.out.println(currentVendor.disPlayInventory());
         } else if(selection == 2) {
-            System.out.println("Enter a product name: ");
-            String productName = scanner.next();
-            System.out.println("Enter a category : ");
-
-            //Product addedProduct = new Product(productName,)
-            //currentVendor.addProduct();
+            attemptToAddProduct();
         } else if (selection == 3) {
-            System.out.println("Not done");
+            attemptToRemoveProduct();
+        } else if (selection == 4) {
+           attemptToAddToShowcase();
+           System.out.println("Here is your showcase");
+           System.out.println(currentVendor.disPlayShowCase());
         } else{
             System.out.println("GoodBye");
             flag = false;
         }
         return flag;
+    }
+    public Product createProduct() {
+        System.out.println("Enter a product name: ");
+        String productName = scanner.next();
+        System.out.println("Enter a category : \nhere are your options ");
+        System.out.println(ProductCategory.disPlayAllOptions());
+        String chosenCategory = scanner.next();
+        ProductCategory category = ProductCategory.ATHLETICS;
+        try {
+            category =   checkCategory(chosenCategory);
+        } catch (ProductNotAvailableException e) {
+            System.out.println("Category is not available");
+        }
+        System.out.println("How much does it cost ");
+        Double price = scanner.nextDouble();
+        Product addedProduct = new Product(productName,category,price);
+        return addedProduct;
+
+    }
+    public void attemptToAddToShowcase() {
+        System.out.println("What is the name product do you want to add ");
+        String name = scanner.next();
+        System.out.println("What slot do your " + name +" in");
+        Integer slot = scanner.nextInt();
+        Boolean result =  currentVendor.addProductToShowCase(name,slot);
+        if(result == false) {
+            System.out.println("You don't have that product in your inventory ");
+        }
+
+    }
+    public void attemptToAddProduct() {
+        Product addedProduct = createProduct();
+        System.out.println("How many do you want to add to your inventory");
+        Integer amount = scanner.nextInt();
+        currentVendor.addProduct(addedProduct,amount);
+    }
+    public void attemptToRemoveProduct() {
+        Product removedProduct = createProduct();
+        Boolean result = currentVendor.removeProduct(removedProduct);
+        if(result == false) {
+            System.out.println("You do not have that product in you inventory");
+        }
+    }
+
+    private ProductCategory checkCategory(String name) throws ProductNotAvailableException {
+        for (ProductCategory category:ProductCategory.values()) {
+            if(category.getName().equals(name)) {
+                return category;
+            }
+
+        }
+        throw new ProductNotAvailableException();
     }
 
 
