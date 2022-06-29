@@ -108,6 +108,7 @@ public class Vendor extends Account {
                 products += product.getName() + " \n";
             }
         }
+
         return products;
     }
 
